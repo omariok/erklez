@@ -1,0 +1,110 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Дизайн-макет: тёплая бумага #F6F4EF */
+    --background: 43 28% 95%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 192 82% 31%;
+    --radius: 0.9rem;
+    /* Шрифты (--font-sans / --font-display / --font-mono) задаёт next/font в layout */
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+    --card: 217 33% 17%;
+    --card-foreground: 210 40% 98%;
+    --muted: 217 33% 20%;
+    --muted-foreground: 215 20% 65%;
+    --border: 217 33% 24%;
+    --input: 217 33% 24%;
+    --ring: 192 82% 45%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased font-sans;
+    text-rendering: optimizeLegibility;
+    /* Запас снизу, чтобы плавающая панель связи не перекрывала контент */
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Якорные переходы не должны прятать заголовок под липкой шапкой */
+  section[id],
+  [id="top"] {
+    scroll-margin-top: 5rem;
+  }
+
+  /* Заметная клавиатурная фокусировка (доступность) */
+  :where(a, button, input, textarea, [tabindex]):focus-visible {
+    @apply outline-none ring-2 ring-turquoise ring-offset-2 ring-offset-background;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  ::selection {
+    @apply bg-turquoise/20 text-graphite-900;
+  }
+}
+
+@layer utilities {
+  /* Эффект стекла — материал даёт цвет */
+  .glass {
+    @apply bg-white/70 backdrop-blur-xl border border-white/40 shadow-glass;
+  }
+  .glass-dark {
+    @apply bg-graphite-900/60 backdrop-blur-xl border border-white/10;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  /* Проявление при скролле/загрузке. Скрывающие стили применяются ТОЛЬКО когда
+     у <html> есть класс .js (ставит инлайновый скрипт в layout до отрисовки).
+     Без JS класс .js отсутствует — контент остаётся видимым (SEO и no-JS). */
+  .reveal,
+  .hero-reveal {
+    transition-property: opacity, transform;
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal {
+    transition-duration: 0.7s;
+  }
+  .hero-reveal {
+    transition-duration: 0.8s;
+  }
+  html.js .reveal:not(.is-visible) {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  html.js .hero-reveal:not(.is-visible) {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}

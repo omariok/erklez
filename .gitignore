@@ -1,0 +1,12 @@
+/node_modules
+/.next
+/out
+/build
+.env
+.env*.local
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+
+# Freebuff (инструмент разработки) — локальное состояние, не часть проекта
+/.freebuff
