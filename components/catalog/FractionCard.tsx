@@ -30,13 +30,22 @@ export function FractionCard({
       aria-label={`Запросить цену — ${fraction.name}`}
       className="group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-[20px] bg-graphite-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-turquoise focus-visible:ring-offset-2"
     >
-      <Image
-        src={fraction.images[0].src}
-        alt={fraction.images[0].alt}
-        fill
-        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-        className="object-cover transition-transform duration-700 group-hover:scale-105"
-      />
+      {/* Фото может отсутствовать (редактор CMS не загрузил) — карточка
+          остаётся рабочей, с фоном-подсветкой цвета фракции. */}
+      {fraction.images[0]?.src ? (
+        <Image
+          src={fraction.images[0].src}
+          alt={fraction.images[0].alt}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          className="object-cover transition-transform duration-700 group-hover:scale-105"
+        />
+      ) : (
+        <div
+          className="absolute inset-0"
+          style={{ background: `linear-gradient(160deg, ${fraction.hex}40, #0f172a 70%)` }}
+        />
+      )}
 
       {/* Затемнение снизу для читаемости подписи */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-graphite-900/90 via-transparent to-transparent" />

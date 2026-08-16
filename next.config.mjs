@@ -7,6 +7,8 @@ const securityHeaders = [
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "X-DNS-Prefetch-Control", value: "on" },
+  // HTTPS повсеместно (на Vercel сертификаты автоматом) — фиксируем протокол.
+  { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },
   {
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
@@ -19,7 +21,11 @@ const nextConfig = {
   compress: true,
   images: {
     formats: ["image/avif", "image/webp"],
-    remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com" }],
+    remotePatterns: [
+      { protocol: "https", hostname: "images.unsplash.com" },
+      // CDN Sanity — картинки из CMS, когда проект будет подключён.
+      { protocol: "https", hostname: "cdn.sanity.io" },
+    ],
     minimumCacheTTL: 60 * 60 * 24 * 30,
   },
   experimental: {

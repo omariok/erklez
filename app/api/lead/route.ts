@@ -62,7 +62,12 @@ export async function POST(req: Request) {
       );
     }
 
-    const body = await req.json();
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Некорректный формат запроса" }, { status: 400 });
+    }
     const parsed = leadSchema.safeParse(body);
 
     if (!parsed.success) {

@@ -13,6 +13,10 @@ import { FinalCta } from "@/components/sections/FinalCta";
 import { organizationJsonLd, productsJsonLd, faqJsonLd } from "@/lib/seo";
 import { getSite, getFractions, getApplications, getFaq } from "@/lib/content-source";
 
+// ISR: статика перегенерируется раз в 5 минут — правки в Sanity (когда будет
+// подключена) подхватываются без нового деплоя. Файловый фолбэк не страдает.
+export const revalidate = 300;
+
 export default async function HomePage() {
   // Контент идёт через content-source (Sanity → файловый фолбэк) единым запросом.
   const [site, fractions, applications, faq] = await Promise.all([

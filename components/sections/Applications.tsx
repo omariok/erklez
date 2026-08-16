@@ -19,13 +19,18 @@ export function Applications({ applications }: { applications: Application[] }) 
           {applications.map((a, i) => (
             <SectionReveal key={a.slug} delay={i * 0.05}>
               <article className="group relative aspect-[4/3] overflow-hidden rounded-2xl">
-                <Image
-                  src={a.image.src}
-                  alt={a.image.alt}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
+                {a.image?.src ? (
+                  <Image
+                    src={a.image.src}
+                    alt={a.image.alt}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                ) : (
+                  /* Запасной фон, если фото в CMS не загрузили */
+                  <div className="absolute inset-0 bg-gradient-to-br from-turquoise/40 to-graphite-900" />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-graphite-950/90 via-graphite-950/20 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-5 text-white">
                   <h3 className="font-display text-lg font-semibold">{a.title}</h3>

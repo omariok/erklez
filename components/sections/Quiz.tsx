@@ -25,6 +25,8 @@ export function Quiz({ fractions }: { fractions: Fraction[] }) {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [source, setSource] = useState("Квиз");
+  // Honeypot: реальный пользователь поле не видит и не заполняет.
+  const [website, setWebsite] = useState("");
   // Пока играет exit-анимация старого шага (0.35s), его кнопки ещё кликабельны.
   // ref-блокировка (синхронная, без re-render) не даёт быстрому двойному клику
   // проскочить шаг (0→2), а setTimeout снимает её сразу после анимации.
@@ -82,6 +84,7 @@ export function Quiz({ fractions }: { fractions: Fraction[] }) {
       needVat: audience === "business",
       consent: true as const,
       source,
+      website,
     });
     setLoading(false);
     if (res.ok) {
@@ -211,6 +214,17 @@ export function Quiz({ fractions }: { fractions: Fraction[] }) {
                   <div>
                     <h3 className="text-lg font-semibold">Куда отправить расчёт?</h3>
                     <div className="mt-4 grid gap-3">
+                      {/* Honeypot — скрыт от людей, видим для ботов */}
+                      <input
+                        type="text"
+                        name="website"
+                        tabIndex={-1}
+                        autoComplete="off"
+                        aria-hidden="true"
+                        value={website}
+                        onChange={(e) => setWebsite(e.target.value)}
+                        className="absolute -left-[9999px] h-0 w-0 opacity-0"
+                      />
                       <input
                         placeholder="Имя"
                         aria-label="Имя"

@@ -2,8 +2,8 @@ import Image from "next/image";
 
 // Лента фотографий материала — медленная «бегущая строка».
 // Только реальные снимки со складов и крупные планы: ничего выдуманного.
-// Анимация чисто CSS (без JS), пауза при наведении, останавливается
-// при prefers-reduced-motion (глобальное правило в globals.css).
+// Анимация чисто CSS (без JS), движется постоянно (в том числе при наведении),
+// останавливается при prefers-reduced-motion (глобальное правило в globals.css).
 
 const shots = [
   { src: "/media/gallery/g01.jpg", w: 480, h: 640, alt: "Эрклёз бирюза — россыпь кускового стекла на складе" },
@@ -33,11 +33,11 @@ export function Gallery() {
         </h2>
       </div>
 
-      <div className="group relative">
+      <div className="relative">
         {/* Отступ задаём каждому элементу (а не gap контейнеру): иначе при
             translateX(-50%) в точке стыка двух половин ленты возникает скачок
             на половину зазора. С per-item margin цикл бесшовный. */}
-        <div className="flex w-max animate-marquee group-hover:[animation-play-state:paused]">
+        <div className="flex w-max animate-marquee">
           {track.map((s, i) => (
             <figure
               key={`${s.src}-${i}`}

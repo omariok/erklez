@@ -15,7 +15,7 @@ npm run dev               # http://localhost:3000
 Владелец правит цены/фото/тексты в визуальной админке на `/studio` — без кода.
 
 Пока проект Sanity не создан, сайт берёт контент из файлов `content/` (фолбэк):
-`site.ts`, `catalog.ts`, `faq.ts`, `applications.ts`, `cases.ts`, `logistics.ts`.
+`site.ts`, `catalog.ts`, `faq.ts`, `applications.ts`, `logistics.ts`, `documents.ts`.
 
 ### Подключить Sanity (один раз, ~15 минут)
 

@@ -72,36 +72,53 @@ function toMedia(img: RawImage | null | undefined, fallbackAlt: string): MediaAs
 
 export async function getSite(): Promise<SiteConfig> {
   if (!sanityClient) return siteFile;
-  const d = await sanityClient.fetch<SiteRow | null>(siteQuery);
-  if (!d) return siteFile;
-  return {
-    name: d.name, domain: d.domain, phone: d.phone,
-    telegram: d.telegram, whatsapp: d.whatsapp,
-    legal: { entity: d.entity, inn: d.inn, vat: !!d.vat },
-    stats: d.stats ?? siteFile.stats,
-  };
+  try {
+    const d = await sanityClient.fetch<SiteRow | null>(siteQuery);
+    if (!d) return siteFile;
+    return {
+      name: d.name, domain: d.domain, phone: d.phone,
+      telegram: d.telegram, whatsapp: d.whatsapp,
+      legal: { entity: d.entity, inn: d.inn, vat: !!d.vat },
+      stats: d.stats ?? siteFile.stats,
+    };
+  } catch {
+    // CMS недоступен/ошибка запроса — сайт обязан работать, отдаём фолбэк.
+    return siteFile;
+  }
 }
 
 export async function getFractions(): Promise<Fraction[]> {
   if (!sanityClient) return fractionsFile;
-  const rows = await sanityClient.fetch<FractionRow[] | null>(fractionsQuery);
-  if (!rows?.length) return fractionsFile;
-  return rows.map((r) => ({
-    ...r,
-    rare: !!r.rare,
-    images: (r.images ?? []).map((i) => toMedia(i, r.name)),
-  }));
+  try {
+    const rows = await sanityClient.fetch<FractionRow[] | null>(fractionsQuery);
+    if (!rows?.length) return fractionsFile;
+    return rows.map((r) => ({
+      ...r,
+      rare: !!r.rare,
+      images: (r.images ?? []).map((i) => toMedia(i, r.name)),
+    }));
+  } catch {
+    return fractionsFile;
+  }
 }
 
 export async function getApplications(): Promise<Application[]> {
   if (!sanityClient) return appsFile;
-  const rows = await sanityClient.fetch<ApplicationRow[] | null>(applicationsQuery);
-  if (!rows?.length) return appsFile;
-  return rows.map((r) => ({ ...r, image: toMedia(r.image, r.title) }));
+  try {
+    const rows = await sanityClient.fetch<ApplicationRow[] | null>(applicationsQuery);
+    if (!rows?.length) return appsFile;
+    return rows.map((r) => ({ ...r, image: toMedia(r.image, r.title) }));
+  } catch {
+    return appsFile;
+  }
 }
 
 export async function getFaq(): Promise<FaqItem[]> {
   if (!sanityClient) return faqFile;
-  const rows = await sanityClient.fetch<FaqRow[] | null>(faqQuery);
-  return rows?.length ? rows : faqFile;
+  try {
+    const rows = await sanityClient.fetch<FaqRow[] | null>(faqQuery);
+    return rows?.length ? rows : faqFile;
+  } catch {
+    return faqFile;
+  }
 }

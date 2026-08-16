@@ -52,12 +52,16 @@ export function Footer({ site }: { site: SiteConfig }) {
           <div className="mt-3 text-graphite-50/60">
             {site.legal.entity}, ИНН {site.legal.inn}
           </div>
-          <a
-            href={documents.certificates ?? "#quiz"}
-            className="mt-3 block underline underline-offset-2 hover:text-white"
-          >
-            {documents.certificates ? "Сертификаты и паспорта качества" : "Запросить сертификаты"}
-          </a>
+          {/* PDF пока нет: ссылку не показываем вовсе — появится автоматически,
+              когда в content/documents.ts будет указан путь до файла. */}
+          {documents.certificates && (
+            <a
+              href={documents.certificates}
+              className="mt-3 block underline underline-offset-2 hover:text-white"
+            >
+              Сертификаты и паспорта качества
+            </a>
+          )}
           <Link href="/privacy" className="mt-2 block underline underline-offset-2 hover:text-white">
             Политика обработки данных
           </Link>

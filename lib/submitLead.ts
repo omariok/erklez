@@ -33,6 +33,9 @@ export async function submitLead(payload: Partial<Lead>): Promise<{ ok: boolean;
     // Автоматически подмешиваем рекламные метки (UTM/yclid) + ClientID Метрики —
     // работает и для короткой формы, и для квиза, без изменений в самих формах.
     const clientId = await getClientId();
+    // Таймаут, чтобы кнопка не крутилась вечно при зависшей сети.
+    // AbortSignal.timeout есть не во всех старых браузерах — тогда шлём без него.
+    const signal = AbortSignal.timeout?.(10_000);
     const res = await fetch("/api/lead", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -41,6 +44,7 @@ export async function submitLead(payload: Partial<Lead>): Promise<{ ok: boolean;
         ...payload,
         ...(clientId ? { clientId } : {}),
       }),
+      signal,
     });
     const data = await res.json();
     if (!res.ok) return { ok: false, error: data?.error ?? "Ошибка отправки" };

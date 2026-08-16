@@ -13,7 +13,9 @@ const EVENT = "erklez:prefill-quiz";
 export function openQuizWith(prefill: LeadPrefill) {
   if (typeof window === "undefined") return;
   window.dispatchEvent(new CustomEvent<LeadPrefill>(EVENT, { detail: prefill }));
-  document.getElementById("quiz")?.scrollIntoView({ behavior: "smooth" });
+  // При prefers-reduced-motion плавный скролл навязчив — едем мгновенно.
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.getElementById("quiz")?.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
 }
 
 export function onQuizPrefill(cb: (p: LeadPrefill) => void) {
