@@ -1,9 +1,9 @@
 import Image from "next/image";
-import { applications } from "@/content/applications";
+import type { Application } from "@/types/content";
 import { SectionReveal } from "@/components/motion/SectionReveal";
 
 // Блок 6 — Сферы применения. 6 плиток «для чего берут».
-export function Applications() {
+export function Applications({ applications }: { applications: Application[] }) {
   return (
     <section id="applications" className="bg-graphite-50 py-14 md:py-20">
       <div className="container">

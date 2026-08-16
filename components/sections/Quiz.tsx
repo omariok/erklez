@@ -8,7 +8,7 @@ import { ConsentCheckbox } from "@/components/forms/ConsentCheckbox";
 import { submitLead } from "@/lib/submitLead";
 import { onQuizPrefill } from "@/lib/leadBus";
 import { reportConversion, GOALS } from "@/lib/metrika";
-import { fractions } from "@/content/catalog";
+import type { Fraction } from "@/types/content";
 
 // Блок 3 — умный квиз с ветвлением частник/бизнес (3–4 шага).
 type Audience = "private" | "business" | null;
@@ -17,7 +17,7 @@ const purposes = ["Сад / ландшафт", "Камин", "Интерьер",
 const privateVolumes = ["До 1 тонны", "1–5 тонн", "Другой объём"];
 const businessVolumes = ["От 10 тонн", "20–50 тонн", "50+ тонн"];
 
-export function Quiz() {
+export function Quiz({ fractions }: { fractions: Fraction[] }) {
   const [step, setStep] = useState(0);
   const [audience, setAudience] = useState<Audience>(null);
   const [data, setData] = useState<Record<string, string | boolean>>({});

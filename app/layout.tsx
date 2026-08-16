@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Manrope, Cormorant, JetBrains_Mono } from "next/font/google";
 import { Toaster } from "sonner";
-import { site } from "@/content/site";
+import { getSite } from "@/lib/content-source";
 import { siteUrl } from "@/lib/seo";
 import { YandexMetrika } from "@/components/analytics/YandexMetrika";
 import { GoogleTagManager } from "@/components/analytics/GoogleTagManager";
@@ -34,52 +34,57 @@ const mono = JetBrains_Mono({
   weight: ["400", "500"],
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: {
-    default: "Эрклёз купить — декоративное кусковое стекло напрямую из печи | с НДС, опт и розница",
-    template: "%s | Эрклёз",
-  },
-  description:
-    "Эрклёз (кусковое декоративное стекло) напрямую из печи. От 1 камня до 100+ тонн с НДС по всей России. Бирюза, Шампань, Зелёный, Тёмный. Склады Клин и Саранск.",
-  keywords: [
-    "эрклёз купить", "кусковое стекло декоративное", "эрклёз цена", "эрклёз оптом",
-    "эрклёз для габионов", "эрклёз с НДС", "декоративное стекло для ландшафта",
-  ],
-  openGraph: {
-    type: "website",
-    locale: "ru_RU",
-    url: siteUrl,
-    siteName: site.name,
-    title: "Эрклёз напрямую из печи — от 1 камня до 100+ тонн с НДС",
-    description: "Переработчик эрклёза. Бирюза, Шампань, Зелёный, Тёмный. Склады Клин и Саранск.",
-    images: [
-      {
-        url: "/og.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Эрклёз — декоративное кусковое стекло напрямую из печи",
-      },
+// generateMetadata (а не статичный export) — чтобы siteName подтягивался
+// из content-source, когда подключат Sanity.
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSite();
+  return {
+    metadataBase: new URL(siteUrl),
+    title: {
+      default: "Эрклёз купить — декоративное кусковое стекло напрямую из печи | с НДС, опт и розница",
+      template: "%s | Эрклёз",
+    },
+    description:
+      "Эрклёз (кусковое декоративное стекло) напрямую из печи. От 1 камня до 100+ тонн с НДС по всей России. Бирюза, Шампань, Зелёный, Тёмный. Склады Клин и Саранск.",
+    keywords: [
+      "эрклёз купить", "кусковое стекло декоративное", "эрклёз цена", "эрклёз оптом",
+      "эрклёз для габионов", "эрклёз с НДС", "декоративное стекло для ландшафта",
     ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Эрклёз напрямую из печи — от 1 камня до 100+ тонн с НДС",
-    description: "Переработчик эрклёза. Бирюза, Шампань, Зелёный, Тёмный. Склады Клин и Саранск.",
-    images: ["/og.jpg"],
-  },
-  robots: { index: true, follow: true },
-  alternates: { canonical: siteUrl },
-  // Подтверждение прав в Вебмастере и Search Console — впишите коды в .env.
-  verification: {
-    ...(process.env.NEXT_PUBLIC_YANDEX_VERIFICATION
-      ? { yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION }
-      : {}),
-    ...(process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION
-      ? { google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION }
-      : {}),
-  },
-};
+    openGraph: {
+      type: "website",
+      locale: "ru_RU",
+      url: siteUrl,
+      siteName: site.name,
+      title: "Эрклёз напрямую из печи — от 1 камня до 100+ тонн с НДС",
+      description: "Переработчик эрклёза. Бирюза, Шампань, Зелёный, Тёмный. Склады Клин и Саранск.",
+      images: [
+        {
+          url: "/og.jpg",
+          width: 1200,
+          height: 630,
+          alt: "Эрклёз — декоративное кусковое стекло напрямую из печи",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Эрклёз напрямую из печи — от 1 камня до 100+ тонн с НДС",
+      description: "Переработчик эрклёза. Бирюза, Шампань, Зелёный, Тёмный. Склады Клин и Саранск.",
+      images: ["/og.jpg"],
+    },
+    robots: { index: true, follow: true },
+    alternates: { canonical: siteUrl },
+    // Подтверждение прав в Вебмастере и Search Console — впишите коды в .env.
+    verification: {
+      ...(process.env.NEXT_PUBLIC_YANDEX_VERIFICATION
+        ? { yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION }
+        : {}),
+      ...(process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION
+        ? { google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION }
+        : {}),
+    },
+  };
+}
 
 // Цвет браузерной хромы на мобильных — под тёмный фон сайта.
 // В Next 15 themeColor живёт в отдельном viewport-экспорте, не в metadata.

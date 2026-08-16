@@ -1,14 +1,15 @@
-import { site } from "@/content/site";
-import { faq } from "@/content/faq";
-import { fractions, wholesale } from "@/content/catalog";
+import { site as siteFile } from "@/content/site";
+import { wholesale } from "@/content/catalog";
+import type { SiteConfig, Fraction, FaqItem } from "@/types/content";
 
-const url = process.env.NEXT_PUBLIC_SITE_URL ?? `https://${site.domain}`;
+const url = process.env.NEXT_PUBLIC_SITE_URL ?? `https://${siteFile.domain}`;
 
 // JSON-LD для расширенных сниппетов Яндекса и Google (Schema.org).
 // Важно: адреса площадок намеренно НЕ публикуются как PostalAddress —
 // точных адресов пока нет, а фейковый NAP вредит локальному SEO и доверию.
 // Вместо LocalBusiness используем Organization + зона обслуживания «Россия».
-export function organizationJsonLd() {
+// Данные приходят параметрами из lib/content-source (Sanity или файлы).
+export function organizationJsonLd(site: SiteConfig) {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -35,7 +36,7 @@ export function organizationJsonLd() {
 }
 
 // Каталог цветов как товарные предложения — даёт цену в сниппете.
-export function productsJsonLd() {
+export function productsJsonLd(fractions: Fraction[], site: SiteConfig) {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -67,11 +68,11 @@ export function productsJsonLd() {
   };
 }
 
-export function faqJsonLd() {
+export function faqJsonLd(items: FaqItem[]) {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: faq.map((f) => ({
+    mainEntity: items.map((f) => ({
       "@type": "Question",
       name: f.question,
       acceptedAnswer: { "@type": "Answer", text: f.answer },

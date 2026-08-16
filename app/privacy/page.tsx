@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { site } from "@/content/site";
+import { getSite } from "@/lib/content-source";
 
 export const metadata: Metadata = {
   title: "Политика обработки персональных данных",
@@ -27,7 +27,8 @@ const cookieRows = [
   },
 ];
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const site = await getSite();
   return (
     <main className="container max-w-3xl py-16">
       <Link href="/" className="font-mono text-[13px] uppercase tracking-[0.14em] text-turquoise">

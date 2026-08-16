@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Plus } from "lucide-react";
-import { faq } from "@/content/faq";
+import type { FaqItem } from "@/types/content";
 import { SectionReveal } from "@/components/motion/SectionReveal";
 
 // Блок 4 — FAQ / борьба с возражениями. (JSON-LD FAQPage добавляется в page.tsx)
-export function Faq() {
+export function Faq({ items }: { items: FaqItem[] }) {
   const [open, setOpen] = useState<number | null>(0);
   return (
     <section id="faq" className="py-14 md:py-20">
@@ -21,7 +21,7 @@ export function Faq() {
           </h2>
         </SectionReveal>
         <div className="mx-auto mt-8 max-w-3xl divide-y divide-border border-y border-border">
-          {faq.map((item, i) => (
+          {items.map((item, i) => (
             <div key={i}>
               <button
                 onClick={() => setOpen(open === i ? null : i)}

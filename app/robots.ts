@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
 import { siteUrl } from "@/lib/seo";
-import { site } from "@/content/site";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -11,7 +10,5 @@ export default function robots(): MetadataRoute.Robots {
       disallow: ["/studio", "/api"],
     },
     sitemap: `${siteUrl}/sitemap.xml`,
-    // Яндекс: директива Host — зеркало сайта, домен БЕЗ протокола и www.
-    host: site.domain,
   };
 }

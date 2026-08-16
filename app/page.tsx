@@ -11,9 +11,14 @@ import { Applications } from "@/components/sections/Applications";
 import { Gallery } from "@/components/sections/Gallery";
 import { FinalCta } from "@/components/sections/FinalCta";
 import { organizationJsonLd, productsJsonLd, faqJsonLd } from "@/lib/seo";
+import { getSite, getFractions, getApplications, getFaq } from "@/lib/content-source";
 
-export default function HomePage() {
-  const jsonLd = [organizationJsonLd(), productsJsonLd(), faqJsonLd()];
+export default async function HomePage() {
+  // Контент идёт через content-source (Sanity → файловый фолбэк) единым запросом.
+  const [site, fractions, applications, faq] = await Promise.all([
+    getSite(), getFractions(), getApplications(), getFaq(),
+  ]);
+  const jsonLd = [organizationJsonLd(site), productsJsonLd(fractions, site), faqJsonLd(faq)];
   return (
     <>
       <script
@@ -24,16 +29,16 @@ export default function HomePage() {
       <Header />
       <main>
         <Hero />
-        <Catalog />
-        <Quiz />
-        <Applications />
-        <Faq />
+        <Catalog fractions={fractions} />
+        <Quiz fractions={fractions} />
+        <Applications applications={applications} />
+        <Faq items={faq} />
         <Logistics />
         <Gallery />
         <FinalCta />
       </main>
-      <Footer />
-      <StickyContactBar />
+      <Footer site={site} />
+      <StickyContactBar site={site} />
     </>
   );
 }

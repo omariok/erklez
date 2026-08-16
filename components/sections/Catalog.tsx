@@ -1,12 +1,13 @@
 "use client";
 
-import { fractions } from "@/content/catalog";
+import type { Fraction } from "@/types/content";
 import { openQuizWith } from "@/lib/leadBus";
 import { SectionReveal } from "@/components/motion/SectionReveal";
 import { FractionCard } from "@/components/catalog/FractionCard";
 
 // Блок 2 — Каталог: 4 фракции. Стиль по дизайн-макету (eyebrow + Cormorant, тёмные карточки).
-export function Catalog() {
+// Данные приходят с сервера (lib/content-source — Sanity или файлы).
+export function Catalog({ fractions }: { fractions: Fraction[] }) {
   return (
     <section id="catalog" className="py-14 md:py-20">
       <div className="container">

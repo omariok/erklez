@@ -24,12 +24,36 @@ function isRateLimited(ip: string): boolean {
   return recent.length > MAX_PER_WINDOW;
 }
 
+// Защита от CSRF: браузер обязан прислать Origin (или Referer как запасной
+// вариант), и хост в нём должен совпадать с хостом запроса. Чужие сайты,
+// отправляющие форму скриптом от имени посетителя, отсекаются здесь.
+// За прокси реальный хост даёт x-forwarded-host.
+function isSameOrigin(req: Request): boolean {
+  const originHeader = req.headers.get("origin") ?? req.headers.get("referer");
+  if (!originHeader) return false;
+  let origin: URL;
+  try {
+    origin = new URL(originHeader);
+  } catch {
+    return false;
+  }
+  const requestHost = req.headers.get("x-forwarded-host") ?? req.headers.get("host");
+  return !!requestHost && origin.host === requestHost;
+}
+
 export async function POST(req: Request) {
   try {
     const ip =
       req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
       req.headers.get("x-real-ip") ||
       "unknown";
+
+    if (!isSameOrigin(req)) {
+      return NextResponse.json(
+        { error: "Не удалось подтвердить источник заявки. Отправьте форму с сайта." },
+        { status: 403 }
+      );
+    }
 
     if (isRateLimited(ip)) {
       return NextResponse.json(

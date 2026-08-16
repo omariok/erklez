@@ -1,11 +1,11 @@
 "use client";
 
 import { Phone, Send, MessageCircle } from "lucide-react";
-import { site } from "@/content/site";
+import type { SiteConfig } from "@/types/content";
 import { reachGoal, GOALS } from "@/lib/metrika";
 
 // Sticky-панель связи всегда на экране — Telegram / WhatsApp / звонок.
-export function StickyContactBar() {
+export function StickyContactBar({ site }: { site: SiteConfig }) {
   const items = [
     { icon: Send, label: "Telegram", href: `https://t.me/${site.telegram}`, cls: "bg-turquoise", goal: GOALS.contactTelegram },
     { icon: MessageCircle, label: "WhatsApp", href: `https://wa.me/${site.whatsapp}`, cls: "bg-emerald", goal: GOALS.contactWhatsApp },

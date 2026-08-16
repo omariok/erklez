@@ -1,12 +1,14 @@
 import Link from "next/link";
-import { site } from "@/content/site";
+import type { SiteConfig } from "@/types/content";
 import { documents } from "@/content/documents";
 import { sites } from "@/content/logistics";
 import { ConsentSettingsLink } from "@/components/consent/ConsentSettingsLink";
 
-const phoneHref = `tel:${site.phone.replace(/[^\d+]/g, "")}`;
+// Контакты/реквизиты приходят с сервера (lib/content-source — Sanity или файлы);
+// документы и площадки пока живут только в файлах (в схеме Sanity их нет).
+export function Footer({ site }: { site: SiteConfig }) {
+  const phoneHref = `tel:${site.phone.replace(/[^\d+]/g, "")}`;
 
-export function Footer() {
   return (
     <footer className="border-t border-white/10 bg-graphite-950 text-graphite-50">
       <div className="container grid gap-10 py-14 md:grid-cols-3">
