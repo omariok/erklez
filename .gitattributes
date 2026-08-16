@@ -1,0 +1,4 @@
+# Скрипты запуска обязаны иметь окончания строк LF:
+# CRLF ломает bash на macOS («bad interpreter» / «command not found»).
+*.command text eol=lf
+*.sh text eol=lf
