@@ -26,6 +26,7 @@ export const leadSchema = z.object({
   utmContent: z.string().max(200).optional(),
   utmTerm: z.string().max(200).optional(),
   yclid: z.string().max(200).optional(),
+  clientId: z.string().max(200).optional(), // ClientID Яндекс.Метрики — для офлайн-конверсий Директа
   referrer: z.string().max(300).optional(),
   landingUrl: z.string().max(300).optional(),
   // Honeypot — у людей пустое. Не режем валидацией: пусть заявка пройдёт схему,

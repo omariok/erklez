@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { ConsentCheckbox } from "@/components/forms/ConsentCheckbox";
 import { submitLead } from "@/lib/submitLead";
-import { reachGoal, GOALS } from "@/lib/metrika";
+import { reportConversion, GOALS } from "@/lib/metrika";
 
 // Короткая форма: Имя + Телефон + Комментарий (минимальное трение) — Блок 8.
 export function LeadForm({ source = "Финальный CTA" }: { source?: string }) {
@@ -28,7 +28,7 @@ export function LeadForm({ source = "Финальный CTA" }: { source?: strin
 
     if (res.ok) {
       setDone(true);
-      reachGoal(GOALS.leadSubmit, { source });
+      reportConversion(GOALS.leadSubmit, { source });
       toast.success("Заявка принята! Менеджер свяжется с вами.");
     } else {
       toast.error(res.error ?? "Ошибка");

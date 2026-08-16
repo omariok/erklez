@@ -43,6 +43,7 @@ export async function sendLeadToTelegram(lead: Lead): Promise<void> {
     lead.utmContent ? `utm_content: ${esc(lead.utmContent)}` : null,
     lead.utmTerm ? `utm_term: ${esc(lead.utmTerm)}` : null,
     lead.yclid ? `yclid: ${esc(lead.yclid)}` : null,
+    lead.clientId ? `ym_client_id: ${esc(lead.clientId)}` : null,
     lead.referrer ? `referrer: ${esc(lead.referrer)}` : null,
     lead.landingUrl ? `страница: ${esc(lead.landingUrl)}` : null,
   ].filter(Boolean);

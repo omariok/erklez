@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ConsentCheckbox } from "@/components/forms/ConsentCheckbox";
 import { submitLead } from "@/lib/submitLead";
 import { onQuizPrefill } from "@/lib/leadBus";
-import { reachGoal, GOALS } from "@/lib/metrika";
+import { reportConversion, GOALS } from "@/lib/metrika";
 import { fractions } from "@/content/catalog";
 
 // Блок 3 — умный квиз с ветвлением частник/бизнес (3–4 шага).
@@ -86,9 +86,9 @@ export function Quiz() {
     setLoading(false);
     if (res.ok) {
       setDone(true);
-      // Квиз — основной путь конверсии: фиксируем ту же цель Метрики,
-      // что и короткая форма (LeadForm), иначе заявки из квиза не считаются.
-      reachGoal(GOALS.leadSubmit, { source });
+      // Квиз — основной путь конверсии: цель Метрики + dataLayer для пикселей
+      // (Авито/VK/партнёрки), иначе заявки из квиза не считаются.
+      reportConversion(GOALS.leadSubmit, { source });
     } else {
       toast.error(res.error ?? "Ошибка");
     }

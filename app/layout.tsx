@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Manrope, Cormorant, JetBrains_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import { site } from "@/content/site";
 import { siteUrl } from "@/lib/seo";
 import { YandexMetrika } from "@/components/analytics/YandexMetrika";
+import { GoogleTagManager } from "@/components/analytics/GoogleTagManager";
 import { UtmCapture } from "@/components/analytics/UtmCapture";
 import { CookieBanner } from "@/components/consent/CookieBanner";
 import "./globals.css";
@@ -69,10 +70,21 @@ export const metadata: Metadata = {
   },
   robots: { index: true, follow: true },
   alternates: { canonical: siteUrl },
-  // Подтверждение прав в Яндекс.Вебмастере — впишите код в NEXT_PUBLIC_YANDEX_VERIFICATION.
-  verification: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION
-    ? { yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION }
-    : undefined,
+  // Подтверждение прав в Вебмастере и Search Console — впишите коды в .env.
+  verification: {
+    ...(process.env.NEXT_PUBLIC_YANDEX_VERIFICATION
+      ? { yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION }
+      : {}),
+    ...(process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION
+      ? { google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION }
+      : {}),
+  },
+};
+
+// Цвет браузерной хромы на мобильных — под тёмный фон сайта.
+// В Next 15 themeColor живёт в отдельном viewport-экспорте, не в metadata.
+export const viewport: Viewport = {
+  themeColor: "#0a0f1a",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -93,6 +105,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Toaster position="top-center" richColors />
         <UtmCapture />
         <YandexMetrika />
+        <GoogleTagManager />
         <CookieBanner />
       </body>
     </html>
