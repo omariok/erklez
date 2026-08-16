@@ -1,29 +1,46 @@
 #!/usr/bin/env bash
-# «Эрклёз» — запуск сайта для просмотра на macOS.
-# Двойной клик по этому файлу: установит зависимости (при первом запуске),
-# соберёт и запустит сайт, откроет его в браузере.
-# Окно Терминала можно закрыть — сайт остановится.
+# «Эрклёз» — запуск сайта для просмотра на macOS. Node.js НЕ требуется:
+# при первом запуске скрипт скачает персональную копию Node.js прямо в папку
+# проекта (.node/) — система не изменяется, права администратора не нужны.
+# Двойной клик: скачать Node → поставить зависимости → собрать → открыть сайт.
 set -euo pipefail
 cd "$(dirname "$0")"
 
 note() { printf '\n\033[1;36m%s\033[0m\n\n' "$*"; }
 fail() { printf '\n\033[1;31m%s\033[0m\n\n' "$*" >&2; }
 pause_exit() { read -r -p "Нажмите Enter, чтобы закрыть окно…" _; exit "${1:-1}"; }
+trap 'fail "Что-то пошло не так (чаще всего — нет доступа к интернету). Запустите файл ещё раз."; pause_exit' ERR
 
-# --- Node.js ---
-if ! command -v node >/dev/null 2>&1; then
-  if command -v brew >/dev/null 2>&1; then
-    note "Node.js не найден. Найден Homebrew — устанавливаю Node.js (LTS)…"
-    brew install node@22 || brew install node
-  else
-    fail "Нужен Node.js 18 или новее. Скачайте LTS-версию с https://nodejs.org, установите и запустите этот файл ещё раз."
+# --- Node.js: уже скачанный в .node/ → системный → скачиваем ---
+if [ -x .node/bin/node ]; then
+  export PATH="$PWD/.node/bin:$PATH"
+elif ! command -v node >/dev/null 2>&1; then
+  note "Node.js не найден. Скачиваю персональную копию в папку проекта
+(~50 МБ, нужна сеть; система и настройки Mac не затрагиваются)…"
+  case "$(uname -m)" in
+    arm64) ARCH="arm64" ;;   # Apple Silicon (M1/M2/M3…)
+    *)     ARCH="x64"   ;;   # Intel
+  esac
+  DIST="https://nodejs.org/dist/latest-v22.x"
+  curl -fsS "$DIST/SHASUMS256.txt" -o .node-shasums.txt
+  FILE="$(grep "darwin-$ARCH.tar.gz\$" .node-shasums.txt | awk '{print $2}')"
+  if [ -z "$FILE" ]; then
+    fail "Не удалось найти Node.js для этой версии macOS. Обратитесь к отправителю архива."
     pause_exit
   fi
+  curl -fL "$DIST/$FILE" -o "$FILE"
+  # Контрольная сумма с официального сайта nodejs.org
+  grep " $FILE\$" .node-shasums.txt > .node-check.txt
+  shasum -a 256 -c .node-check.txt
+  mkdir -p .node
+  tar -xzf "$FILE" --strip-components=1 -C .node
+  rm -f "$FILE" .node-shasums.txt .node-check.txt
+  export PATH="$PWD/.node/bin:$PATH"
 fi
 
 NODE_MAJOR="$(node -v | sed 's/^v\([0-9]*\).*/\1/')"
 if [ "${NODE_MAJOR:-0}" -lt 18 ]; then
-  fail "Обнаружен Node.js $(node -v) — нужен 18+. Обновите LTS-версию на https://nodejs.org"
+  fail "Обнаружен Node.js $(node -v), нужен 18+. Удалите старый Node или скачайте LTS с https://nodejs.org"
   pause_exit
 fi
 
@@ -57,4 +74,5 @@ for _ in $(seq 1 60); do
 done
 open "http://localhost:$PORT"
 
-wait "$SERVER_PID"
+wait "$SERVER_PID" || true
+note "Сайт остановлен."
